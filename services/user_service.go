@@ -1,37 +1,42 @@
 package services
 
 import (
-	"errors"
-	"time"
-	"your-project/models"
-	"your-project/repositories"
+	"testing"
 )
 
-func ValidateTodo(todo models.Todo) error {
-	if todo.Title == "" {
-		return errors.New("Title cannot be empty")
+func TestParseDueDate(t *testing.T) {
+	s := NewTodoService(nil)
+
+	in := "2025-07-20T12:00:00Z"
+	out, err := s.parseDueDate(&in)
+	if err != nil || out == nil {
+		t.Fatalf("expected valid due date, got err=%v", err)
 	}
-	if todo.Priority != "Low" && todo.Priority != "Medium" && todo.Priority != "High" {
-		return errors.New("Priority must be Low, Medium, or High")
+
+	past := "2025-07-10T12:00:00Z"
+	_, err = s.parseDueDate(&past)
+	if err == nil {
+		t.Fatalf("expected error for past due date")
 	}
-	if todo.DueDate != nil && todo.DueDate.Before(time.Now().UTC()) {
-		return errors.New("Due date cannot be in the past")
+
+	_, err = s.parseDueDate(nil)
+	if err != nil {
+		t.Fatalf("expected no error for nil due date")
 	}
-	return nil
+
+	invalid := "2025-07-20"
+	_, err = s.parseDueDate(&invalid)
+	if err == nil {
+		t.Fatalf("expected parse error for invalid format")
+	}
 }
 
-func CreateTodoService(todo models.Todo) (models.Todo, error) {
-	if err := ValidateTodo(todo); err != nil {
-		return todo, err
+func TestValidatePriority(t *testing.T) {
+	s := NewTodoService(nil)
+	if !s.validatePriority("Low") || !s.validatePriority("medium") || !s.validatePriority("HIGH") {
+		t.Fatalf("expected valid priorities")
 	}
-	if todo.Completed {
-		now := time.Now().UTC()
-		todo.CompletedAt = &now
+	if s.validatePriority("invalid") {
+		t.Fatalf("expected invalid priority")
 	}
-	id, err := repositories.CreateTodo(todo)
-	if err != nil {
-		return todo, err
-	}
-	todo.ID = id
-	return todo, nil
 }

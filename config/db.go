@@ -1,38 +1,25 @@
 package config
 
 import (
-	"database/sql"
 	"fmt"
-	"log"
 	"os"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-var DB *sql.DB
+var DB *gorm.DB
 
-func InitDB() {
-	dsn := fmt.Sprintf(
-		"host=localhost port=5432 user=%s password=%s dbname=todo_app sslmode=disable",
-		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"),
-	)
+func InitDB() error {
+	dsn := os.Getenv("DATABASE_DSN")
+	if dsn == "" {
 
-	var err error
-	DB, err = sql.Open("postgres", dsn)
-	if err != nil {
-		log.Fatal("Failed to connect to DB: ", err)
+		dsn = "host=127.0.0.1 user=postgres password=postgres dbname=todo_app port=5432 sslmode=disable TimeZone=UTC"
 	}
-
-	createTable :=
-		`CREATE TABLE IF NOT EXISTS todos (
-		id SERIAL PRIMARY KEY,
-		title VARCHAR(255) NOT NULL,
-		completed BOOLEAN NOT NULL,
-		category VARCHAR(50) NOT NULL,
-		priority VARCHAR(10) NOT NULL,
-		completed_at TIMESTAMP NULL,
-		due_date TIMESTAMP NULL
-	);`
-	_, err = DB.Exec(createTable)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Failed to create table: ", err)
+		return fmt.Errorf("failed to connect database: %w", err)
 	}
+	DB = db
+	return nil
 }
