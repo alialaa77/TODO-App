@@ -31,4 +31,20 @@ require (
 	golang.org/x/text v0.28.0 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/driver/sqlite v1.4.7
+	gorm.io/gorm v1.26.5
+	gorm.io/plugin/dbresolver v1.4.6
+	gorm.io/plugin/soft_delete v1.4.6
+	gorm.io/plugin/validate v1.4.6
+	gorm.io/plugin/validator v1.4.6
+	gorm.io/plugin/version v1.4.6
+	gorm.io/plugin/write v1.4.6
+	github.com/alialaa77/TODO-App v0.0.0-20240624092757-1f3e2a4b1b2d
+	github.com/alialaa77/TODO-App/models v0.0.0-20240624092757-1f3e2a4b1b2d
+
+	github.com/alialaa77/TODO-App/repositories v0.0.0-20240624092757-1f3e2a4b1b2d	
+	github.com/alialaa77/TODO-App/services v0.0.0-20240624092757-1f3e2a4b1b2d
+github.com/alialaa77/TODO-App/config v0.0.0-20240624092757-1f3e2a4b1b2d
+
+"github.com/golang-jwt/jwt/v4" v4.4.3
 )
